@@ -11,7 +11,7 @@ class FeedbackRepository:
     ) -> Feedback:
         feedback = Feedback(
             session_id=session_id,
-            score=score,
+            interview_score=score,
             strengths=strengths,
             weaknesses=weaknesses,
             cv_improvements=cv_improvements
