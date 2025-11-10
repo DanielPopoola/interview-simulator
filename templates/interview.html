@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interview - {{ session.job_title }}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <div class="container mx-auto px-4 py-8 max-w-4xl">
+        
+        <!-- Header with Progress -->
+        <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+            <div class="flex justify-between items-center mb-4">
+                <div>
+                    <h1 class="text-2xl font-bold">Interview in Progress</h1>
+                    <p class="text-gray-600">{{ session.job_title }} at {{ session.company_name }}</p>
+                </div>
+                <div class="text-right">
+                    <p class="text-sm text-gray-500">Progress</p>
+                    <p class="text-2xl font-bold text-blue-600" id="progress-count">
+                        {{ progress.question_count }}/{{ progress.max_questions }}
+                    </p>
+                </div>
+            </div>
+            
+            <!-- Progress Bar -->
+            <div class="w-full bg-gray-200 rounded-full h-2">
+                <div class="bg-blue-600 h-2 rounded-full transition-all duration-300" 
+                     id="progress-bar"
+                     style="width: {{ (progress.question_count / progress.max_questions * 100)|int }}%">
+                </div>
+            </div>
+        </div>
+
+        <!-- Chat Container -->
+        <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+            <div id="chat-container" class="space-y-4 mb-6 max-h-96 overflow-y-auto"
+                 {% if task_id %}
+                 hx-get="{{ url_for('task_status', task_id=task_id, session_id=session.id, task_type=task_type) }}"
+                 hx-trigger="load, every 2s"
+                 hx-swap="innerHTML"
+                 {% endif %}
+            >
+                {% for message in conversation %}
+                    {% if message.role == 'assistant' %}
+                        <!-- AI Message (Interviewer) -->
+                        <div class="flex items-start space-x-3">
+                            <div class="flex-shrink-0 w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white font-semibold">
+                                AI
+                            </div>
+                            <div class="flex-1 bg-blue-50 rounded-lg p-4">
+                                <p class="text-sm font-semibold text-blue-900 mb-1">Interviewer</p>
+                                <p class="text-gray-800">{{ message.content }}</p>
+                            </div>
+                        </div>
+                    {% elif message.role == 'user' %}
+                        <!-- User Message -->
+                        <div class="flex items-start space-x-3 justify-end">
+                            <div class="flex-1 bg-green-50 rounded-lg p-4 text-right">
+                                <p class="text-sm font-semibold text-green-900 mb-1">You</p>
+                                <p class="text-gray-800">{{ message.content }}</p>
+                            </div>
+                            <div class="flex-shrink-0 w-8 h-8 bg-green-600 rounded-full flex items-center justify-center text-white font-semibold">
+                                U
+                            </div>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+
+            <!-- Answer Form (Hidden when complete) -->
+            {% if not progress.is_complete %}
+            <div id="answer-form-wrapper">
+                <form hx-post="/session/{{ session.id }}/message"
+                      hx-target="#chat-container"
+                      hx-swap="beforeend"
+                      hx-on::after-request="this.reset(); document.getElementById('chat-container').scrollTop = document.getElementById('chat-container').scrollHeight;"
+                      class="space-y-3"
+                      id="answer-form"
+                      hx-indicator="#loading-indicator">
+                    
+                    <textarea name="answer" 
+                              required
+                              rows="3"
+                              placeholder="Type your answer here..."
+                              class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+                              id="answer-input"></textarea>
+                    
+                    <div class="flex justify-between items-center">
+                        <p class="text-sm text-gray-500">
+                            Press <kbd class="px-2 py-1 bg-gray-100 border rounded">Enter</kbd> to send
+                        </p>
+                        <button type="submit" 
+                                class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition">
+                            Send Answer →
+                        </button>
+                    </div>
+                </form>
+                <div id="loading-indicator" class="htmx-indicator flex items-center space-x-3 p-4 bg-gray-50 border border-gray-200 rounded-lg mt-4">
+                    <div class="flex-shrink-0 w-8 h-8 bg-gray-600 rounded-full flex items-center justify-center text-white font-bold">
+                        ...
+                    </div>
+                    <div class="flex-1">
+                        <p class="text-sm font-semibold text-gray-900 mb-1">AI is thinking...</p>
+                        <p class="text-gray-800">Please wait a moment.</p>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Complete Interview Button -->
+            {% if progress.is_complete %}
+            <div class="bg-green-50 border border-green-200 rounded-lg p-6 text-center">
+                <p class="text-green-800 mb-4 text-lg font-semibold">
+                    ✓ Interview Complete! Ready to see your feedback?
+                </p>
+                <form action="/session/{{ session.id }}/complete" method="POST">
+                    <button type="submit" 
+                            class="bg-green-600 text-white px-8 py-3 rounded-lg hover:bg-green-700 font-semibold">
+                        View Feedback & Results →
+                    </button>
+                </form>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Help Text -->
+        <div class="text-center text-gray-500 text-sm">
+            <p>💡 Tip: Be specific and detailed in your answers. The AI will provide better feedback!</p>
+        </div>
+    </div>
+
+    <script>
+        // Auto-scroll to bottom on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            const chatContainer = document.getElementById('chat-container');
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        });
+
+        // Enable Enter key to submit (Shift+Enter for new line)
+        document.getElementById('answer-input')?.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                document.getElementById('answer-form').dispatchEvent(new Event('submit', {bubbles: true}));
+            }
+        });
+    </script>
+</body>
+</html>
