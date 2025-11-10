@@ -7,7 +7,7 @@ class GeminiProvider:
         if not api_key:
             raise ValueError("API key is required")
         
-        self.client = genai.Client(api_key=api_key)
+        self.client = genai.Client(api_key=api_key).aio
         self.model_name = model_name
 
     @retry(
@@ -15,22 +15,14 @@ class GeminiProvider:
         wait=wait_exponential(multiplier=1, min=2, max=10),
         retry=retry_if_exception_type((ConnectionError, TimeoutError))
     )
-    def generate_text(
+    async def generate_text(
         self,
         prompt: str,
-        temperature: float = 0.7,
-        max_tokens: int = 2048
     ) -> str:
-        generation_config = {
-            'temperature': temperature,
-            'top_p': 0.95,
-            'top_k': 40,
-            'max_output_tokens': max_tokens,
-        }
+        
 
-        response = self.client.models.generate_content(
+        response = await self.client.models.generate_content(
             model=self.model_name, contents=prompt,
-            config=generation_config
         )
 
         if not response.parts:

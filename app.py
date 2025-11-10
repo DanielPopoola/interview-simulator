@@ -37,7 +37,7 @@ feedback_repository = FeedbackRepository()
 # AI Client
 gemini_provider = GeminiProvider(
     api_key=os.getenv('GEMINI_API_KEY', ""),
-    model_name='gemini-1.5-flash'
+    model_name='gemini-2.5-flash'
 )
 ai_client = AIClient(gemini_provider)
 
@@ -132,7 +132,7 @@ def upload_job_description(session_id):
 
 
 @app.route('/session/<int:session_id>/interview')
-def interview_page(session_id):
+async def interview_page(session_id):
     try:
         session = session_service.get_session(session_id)
         if not session_service.is_ready_for_interview(session_id):
@@ -141,7 +141,7 @@ def interview_page(session_id):
 
         progress = interview_service.get_interview_progress(session_id)
         if not progress['is_started']:
-            interview_service.start_interview(session_id)
+            await interview_service.start_interview(session_id)
         
         conversation = message_repository.get_conversation(session_id)
         
@@ -176,9 +176,9 @@ def send_message(session_id):
         return render_template('fragments/error.html', message=str(e))
 
 @app.route('/session/<int:session_id>/complete', methods=['POST'])
-def complete_interview(session_id):
+async def complete_interview(session_id):
     try:
-        feedback_service.generate_feedback(session_id)
+        await feedback_service.generate_feedback(session_id)
         return redirect(url_for('feedback_page', session_id=session_id))
     except (ValidationError, NotFoundError, AIServiceError) as e:
         flash(str(e), 'error')

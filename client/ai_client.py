@@ -9,14 +9,14 @@ class AIClient:
     def __init__(self, provider: AIProvider):
         self.provider = provider
 
-    def generate_interview_questions(self, cv_text, job_desc, job_title, company_name) -> list[str]:
+    async def generate_interview_questions(self, cv_text, job_desc, job_title, company_name) -> list[str]:
         prompt = PromptTemplates.interview_question_generation(
             cv_text=cv_text,
             job_description=job_desc,
             job_title=job_title,
             company_name=company_name,
         )
-        text = self._generate(prompt, 0.8, 2048)
+        text = await self._generate(prompt)
         questions = self._parse_json(text, expect_list=True)
 
         if not (4 <= len(questions) <= 10):
@@ -24,7 +24,7 @@ class AIClient:
         
         return questions[:8]
     
-    def generate_followup_question(self, convo_history, cv_text, job_desc, question_count, max_questions=8) -> str:
+    async def generate_followup_question(self, convo_history, cv_text, job_desc, question_count, max_questions=8) -> str:
         formatted = PromptTemplates.format_conversation_history(convo_history)
         prompt = PromptTemplates.followup_question_generation(
             conversation_history=formatted,
@@ -33,13 +33,13 @@ class AIClient:
             question_count=question_count,
             max_questions=max_questions,
         )
-        text = self._generate(prompt, 0.7, 1024)
+        text = await self._generate(prompt)
         question = re.sub(r'^(Question:|Follow-up:|Here\'s a question:)\s*', '', text.strip(), flags=re.I).strip('"\'')
         if not question:
             raise AIServiceError("AI returned empty response")
         return question
     
-    def generate_feedback(self, convo_history, cv_text, job_desc, job_title) -> dict:
+    async def generate_feedback(self, convo_history, cv_text, job_desc, job_title) -> dict:
         formatted = PromptTemplates.format_conversation_history(convo_history)
         prompt = PromptTemplates.feedback_generation(
             conversation_history=formatted,
@@ -47,7 +47,7 @@ class AIClient:
             job_description=job_desc,
             job_title=job_title,
         )
-        feedback = self._parse_json(self._generate(prompt, 0.5, 2048), expect_list=False)
+        feedback = self._parse_json(await self._generate(prompt), expect_list=False)
 
         required = {'score', 'strengths', 'weaknesses', 'cv_improvements'}
         missing = required - feedback.keys()
@@ -60,9 +60,9 @@ class AIClient:
 
         return feedback
 
-    def _generate(self, prompt: str, temperature: float, max_tokens: int) -> str:
+    async def _generate(self, prompt: str) -> str:
         try:
-            return self.provider.generate_text(prompt=prompt, temperature=temperature, max_tokens=max_tokens)
+            return await self.provider.generate_text(prompt)
         except Exception as e:
             raise AIServiceError(f"AI generation failed: {e}")
 
