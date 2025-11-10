@@ -44,6 +44,33 @@ Example format:
 Generate the questions now:"""
     
     @staticmethod
+    def first_question_generation(
+        cv_text: str,
+        job_description: str,
+        job_title: str,
+        company_name: str
+    ) -> str:
+        return f"""You are an experienced interviewer starting an interview for {job_title} at {company_name}.
+
+    CANDIDATE'S CV:
+    {cv_text[:2000]}
+
+    JOB DESCRIPTION:
+    {job_description[:2000]}
+
+    Your task: Generate ONE opening question to start the interview.
+
+    This should be:
+    - A warm, professional opener
+    - Related to their most relevant experience for this role
+    - Encouraging and conversational
+    - Open-ended to let them share their background
+
+    Return ONLY the question text. No JSON, no extra formatting, no prefixes.
+
+    Generate the opening question now:"""
+
+    @staticmethod
     def followup_question_generation(
         conversation_history: str,
         cv_text: str,
@@ -51,40 +78,28 @@ Generate the questions now:"""
         question_count: int,
         max_questions: int = 8
     ) -> str:
-        should_continue = question_count < max_questions
-        
-        if should_continue:
-            instruction = """Based on the conversation so far, generate ONE follow-up question.
+        return f"""You are conducting a job interview. Based on the conversation so far, generate the NEXT question.
 
-The question should:
-1. Build on their previous answer
-2. Dive deeper into relevant areas
-3. Assess skills mentioned in the job description
-4. Be natural and conversational
+    CONVERSATION SO FAR:
+    {conversation_history}
 
-Return ONLY the question text. No JSON, no extra formatting."""
-        else:
-            instruction = """The interview has covered sufficient ground. Generate a polite closing statement.
+    CANDIDATE'S CV (for context):
+    {cv_text[:1500]}
 
-Example: "Thank you for your detailed responses. 
-That concludes our interview today. We'll be in touch soon regarding next steps."
+    JOB REQUIREMENTS (for context):
+    {job_description[:1500]}
 
-Return ONLY the closing statement."""
-        
-        return f"""You are conducting a job interview for a candidate.
+    PROGRESS: This will be question {question_count + 1} of {max_questions}
 
-CONVERSATION SO FAR:
-{conversation_history}
+    Generate ONE follow-up question that:
+    1. Builds naturally on their previous answer
+    2. Explores a different aspect of their experience or the role
+    3. Assesses skills mentioned in the job description
+    4. Feels conversational and engaging
 
-CANDIDATE'S CV (for context):
-{cv_text[:1500]}
+    Return ONLY the question text. No JSON, no formatting, no prefixes like "Question:".
 
-JOB REQUIREMENTS (for context):
-{job_description[:1500]}
-
-QUESTION COUNT: {question_count} of {max_questions}
-
-{instruction}"""
+    Generate the next question now:"""
     
     @staticmethod
     def feedback_generation(

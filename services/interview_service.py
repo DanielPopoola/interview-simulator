@@ -15,7 +15,7 @@ class InterviewService:
         self.message_repo = message_repository
         self.ai_client = ai_client
     
-    async def start_interview(self, session_id: int) -> list[str]:
+    async def start_interview(self, session_id: int) -> str:
         session = self.session_repo.get_by_id(session_id)
         if not session:
             raise NotFoundError(f"Session {session_id} not found")
@@ -26,17 +26,16 @@ class InterviewService:
         if self.message_repo.count_messages(session_id) > 0:
             raise ValidationError("Interview has already started.")
 
-        questions = await self.ai_client.generate_interview_questions(
+        first_question = await self.ai_client.generate_interview_questions(
             cv_text=session.cv_text,
             job_desc=session.job_description_text,
             job_title=session.job_title,
             company_name=session.company_name
         )
 
-        messages_to_create = [{"role": "assistant", "content": q} for q in questions]
-        self.message_repo.create_messages_bulk(session_id, messages_to_create)
-
-        return questions
+        self.message_repo.create_message(session_id, "assistant", first_question)
+    
+        return first_question
     
     async def submit_answer(self, session_id: int, answer: str) -> dict:
         if not answer or not answer.strip():
@@ -54,9 +53,6 @@ class InterviewService:
             }
 
         session = self.session_repo.get_by_id(session_id)
-        if not session:
-            raise NotFoundError(f"Session {session_id} not found")
-            
         convo_history = self.message_repo.conversation_to_history(session_id)
         
         next_question = await self.ai_client.generate_followup_question(

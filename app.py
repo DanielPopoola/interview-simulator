@@ -163,8 +163,14 @@ async def send_message(session_id):
         answer = request.form.get('answer', '')
         result = await interview_service.submit_answer(session_id, answer)
         
-        user_message = message_repository.get_conversation(session_id)[-2]
-        ai_message = message_repository.get_conversation(session_id)[-1]
+        conversation = message_repository.get_conversation(session_id)
+        
+        if result['is_complete']:
+            user_message = conversation[-1]
+            ai_message = None
+        else:
+            user_message = conversation[-2]
+            ai_message = conversation[-1]
 
         return render_template(
             'fragments/chat_messages.html',
