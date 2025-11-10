@@ -3,10 +3,8 @@ from typing import Protocol
 
 class AIProvider(Protocol):
     
-    def generate_text(
+    def generate_text_async(
         self, 
-        prompt: str, 
-        temperature: float = 0.7,
-        max_tokens: int = 2048
+        prompt: str,
     ) -> str:
         ...

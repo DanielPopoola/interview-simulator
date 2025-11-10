@@ -39,26 +39,22 @@ class DocumentParser:
 
     @staticmethod
     def _extract_from_pdf(file_path: str) -> str:
-        import PyPDF2
+        import pdfplumber
         try:
-            text_parts = []
-            with open(file_path, 'rb') as file:
-                pdf_reader = PyPDF2.PdfReader(file)
-
-                if len(pdf_reader.pages) == 0:
-                    raise DocumentParsingError("PDF file is empty")
+            with pdfplumber.open(file_path) as pdf:
+                if not pdf.pages:
+                    raise DocumentParsingError("PDF file is empty or corrupted")
                 
-                for page in pdf_reader.pages:
-                    text_parts.append(page.extract_text())
-
+                text_parts = [page.extract_text() for page in pdf.pages if page.extract_text()]
+            
             full_text = '\n'.join(text_parts)
 
             if not full_text.strip():
-                raise DocumentParsingError("No text content found in PDF")
+                raise DocumentParsingError("No text content could be extracted from the PDF")
             
             return full_text
-        except PyPDF2.errors.PdfReadError as e:
-            raise DocumentParsingError(f"Invalid PDF file: {e}")
+        except Exception as e:
+            raise DocumentParsingError(f"Failed to read PDF with pdfplumber: {e}")
 
     @staticmethod
     def _extract_from_docx(file_path: str) -> str:

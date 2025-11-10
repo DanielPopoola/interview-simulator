@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, abort
+from dotenv import load_dotenv
 from models import db
 from repositories import FileRepository, SessionRepository, MessageRepository, FeedbackRepository
 from services import DocumentService, InterviewService, SessionService, FeedbackService
@@ -15,6 +16,8 @@ import os
 from client.ai_client import AIClient
 from client.gemini_provider import GeminiProvider
 
+load_dotenv()
+
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'dev-secret-key-change-in-production'
 app.config['UPLOAD_FOLDER'] = 'uploads'
@@ -24,9 +27,16 @@ app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///interview_simulator.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
+# Celery configuration
+app.config['CELERY_BROKER_URL'] = os.getenv('CELERY_BROKER_URL', 'redis://localhost:6379/0')
+app.config['CELERY_RESULT_BACKEND'] = os.getenv('CELERY_RESULT_BACKEND', 'redis://localhost:6379/0')
+
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
 db.init_app(app)
+
+from celery_worker import celery
+celery.conf.update(app.config)
 
 # Repositories
 session_repository = SessionRepository()
@@ -37,7 +47,7 @@ feedback_repository = FeedbackRepository()
 # AI Client
 gemini_provider = GeminiProvider(
     api_key=os.getenv('GEMINI_API_KEY', ""),
-    model_name='gemini-1.5-flash'
+    model_name='gemini-2.5-flash'
 )
 ai_client = AIClient(gemini_provider)
 
@@ -141,7 +151,8 @@ def interview_page(session_id):
 
         progress = interview_service.get_interview_progress(session_id)
         if not progress['is_started']:
-            interview_service.start_interview(session_id)
+            task_id = interview_service.start_interview(session_id)
+            return render_template('interview.html', session=session, conversation=[], progress=progress, task_id=task_id, task_type='start')
         
         conversation = message_repository.get_conversation(session_id)
         
@@ -161,19 +172,34 @@ def interview_page(session_id):
 def send_message(session_id):
     try:
         answer = request.form.get('answer', '')
-        result = interview_service.submit_answer(session_id, answer)
+        task_id = interview_service.submit_answer(session_id, answer)
         
-        user_message = message_repository.get_conversation(session_id)[-2]
-        ai_message = message_repository.get_conversation(session_id)[-1]
+        if task_id == 'complete':
+            progress = interview_service.get_interview_progress(session_id)
+            return render_template('fragments/chat_messages.html', progress=progress, session_id=session_id)
+
+        user_message = message_repository.get_conversation(session_id)[-1]
 
         return render_template(
             'fragments/chat_messages.html',
             user_message=user_message,
-            ai_message=ai_message,
-            progress=result
+            task_id=task_id,
+            task_type='answer',
+            session_id=session_id
         )
     except (ValidationError, NotFoundError, AIServiceError) as e:
         return render_template('fragments/error.html', message=str(e))
+
+@app.route('/task/<string:task_id>/<int:session_id>/<string:task_type>')
+def task_status(task_id, session_id, task_type):
+    result = interview_service.get_task_result(task_id, session_id, task_type)
+    if result['status'] == 'SUCCESS':
+        ai_message = message_repository.get_conversation(session_id)[-1]
+        progress = interview_service.get_interview_progress(session_id)
+        return render_template('fragments/chat_messages.html', ai_message=ai_message, progress=progress, session_id=session_id)
+    else:
+        return ""
+
 
 @app.route('/session/<int:session_id>/complete', methods=['POST'])
 def complete_interview(session_id):
