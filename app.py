@@ -135,7 +135,7 @@ def upload_job_description(session_id):
 
 
 @app.route('/session/<int:session_id>/interview')
-async def interview_page(session_id):
+def interview_page(session_id):
     try:
         session = session_service.get_session(session_id)
         if not session_service.is_ready_for_interview(session_id):
@@ -144,7 +144,7 @@ async def interview_page(session_id):
 
         progress = interview_service.get_interview_progress(session_id)
         if not progress['is_started']:
-            await interview_service.start_interview(session_id)
+            interview_service.start_interview(session_id)
         
         conversation = message_repository.get_conversation(session_id)
         
@@ -161,10 +161,10 @@ async def interview_page(session_id):
         return redirect(url_for('upload_page', session_id=session_id))
 
 @app.route('/session/<int:session_id>/message', methods=['POST'])
-async def send_message(session_id):
+def send_message(session_id):
     try:
         answer = request.form.get('answer', '')
-        result = await interview_service.submit_answer(session_id, answer)
+        result = interview_service.submit_answer(session_id, answer)
         
         conversation = message_repository.get_conversation(session_id)
         
@@ -186,9 +186,9 @@ async def send_message(session_id):
         return render_template('fragments/error.html', message=str(e))
 
 @app.route('/session/<int:session_id>/complete', methods=['POST'])
-async def complete_interview(session_id):
+def complete_interview(session_id):
     try:
-        await feedback_service.generate_feedback(session_id)
+        feedback_service.generate_feedback(session_id)
         return redirect(url_for('feedback_page', session_id=session_id))
     except (ValidationError, NotFoundError, AIServiceError) as e:
         flash(str(e), 'error')

@@ -17,7 +17,7 @@ class FeedbackService:
         self.feedback_repo = feedback_repository
         self.ai_client = ai_client
     
-    async def generate_feedback(self, session_id: int) -> Feedback:
+    def generate_feedback(self, session_id: int) -> Feedback:
         session = self.session_repo.get_by_id(session_id)
         if not session:
             raise NotFoundError(f"Session {session_id} not found")
@@ -29,7 +29,7 @@ class FeedbackService:
         if not conversation_history:
             raise ValidationError("Cannot generate feedback for an empty interview.")
 
-        feedback_data = await self.ai_client.generate_feedback(
+        feedback_data = self.ai_client.generate_feedback(
             convo_history=conversation_history,
             cv_text=session.cv_text,
             job_desc=session.job_description_text,
