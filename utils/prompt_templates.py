@@ -95,6 +95,7 @@ QUESTION COUNT: {question_count} of {max_questions}
     ) -> str:
         return f"""You are an expert interview analyst. 
         Analyze this job interview and provide comprehensive feedback.
+        Your output MUST be a valid JSON object.
 
 JOB TITLE: {job_title}
 
@@ -129,13 +130,12 @@ Provide a thorough analysis covering:
    - Specific wording or section suggestions
 
 OUTPUT FORMAT:
-Return ONLY a JSON object with this exact structure:
+Return ONLY a JSON object with this exact structure. Ensure all strings are properly escaped.
 {{
-  "score": 7,
-  "strengths": "• Strong technical background in Python...\\n• Excellent communication...",
-  "weaknesses": "• Limited experience with cloud platforms...\\n• Could provide more specific metrics...",
-  "cv_improvements": "• Add a 'Cloud Technologies' section highlighting AWS projects\\n• 
-  Quantify impact in project descriptions..."
+  "score": <integer>,
+  "strengths": "<string>",
+  "weaknesses": "<string>",
+  "cv_improvements": "<string>"
 }}
 
 Be constructive, specific, and actionable. Use bullet points (•) for lists.

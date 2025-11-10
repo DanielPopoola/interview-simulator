@@ -158,10 +158,10 @@ async def interview_page(session_id):
         return redirect(url_for('upload_page', session_id=session_id))
 
 @app.route('/session/<int:session_id>/message', methods=['POST'])
-def send_message(session_id):
+async def send_message(session_id):
     try:
         answer = request.form.get('answer', '')
-        result = interview_service.submit_answer(session_id, answer)
+        result = await interview_service.submit_answer(session_id, answer)
         
         user_message = message_repository.get_conversation(session_id)[-2]
         ai_message = message_repository.get_conversation(session_id)[-1]
@@ -170,7 +170,8 @@ def send_message(session_id):
             'fragments/chat_messages.html',
             user_message=user_message,
             ai_message=ai_message,
-            progress=result
+            progress=result,
+            session_id=session_id
         )
     except (ValidationError, NotFoundError, AIServiceError) as e:
         return render_template('fragments/error.html', message=str(e))

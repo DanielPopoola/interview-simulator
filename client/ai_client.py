@@ -1,6 +1,7 @@
 import json
 import re
 from exceptions import AIServiceError
+from tenacity import retry, stop_after_attempt, wait_exponential, retry_if_exception_type
 from utils.prompt_templates import PromptTemplates
 from .ai_provider import AIProvider
 
@@ -66,12 +67,17 @@ class AIClient:
         except Exception as e:
             raise AIServiceError(f"AI generation failed: {e}")
 
+    @retry(
+            stop=stop_after_attempt(3),
+            wait=wait_exponential(multiplier=1, min=2, max=10),
+            retry=retry_if_exception_type(AIServiceError)
+    )
     def _parse_json(self, text: str, expect_list: bool):
         text = re.sub(r'```json\s*|```', '', text)
         match = re.search(r'(\[.*\]|\{.*\})', text, re.DOTALL)
         if not match:
             raise AIServiceError("No JSON structure found in response")
-
+        
         try:
             data = json.loads(match.group(0))
         except json.JSONDecodeError as e:
