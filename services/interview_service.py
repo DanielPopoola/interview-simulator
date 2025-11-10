@@ -26,7 +26,7 @@ class InterviewService:
         if self.message_repo.count_messages(session_id) > 0:
             raise ValidationError("Interview has already started.")
 
-        first_question = await self.ai_client.generate_interview_questions(
+        first_question = await self.ai_client.generate_first_question(
             cv_text=session.cv_text,
             job_desc=session.job_description_text,
             job_title=session.job_title,

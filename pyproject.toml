@@ -14,4 +14,7 @@ dependencies = [
     "python-docx>=1.2.0",
     "ruff>=0.14.4",
     "tenacity>=9.1.2",
+    "gunicorn>=23.0.0",
+    "uvicorn>=0.38.0",
+    "a2wsgi>=1.10.10",
 ]

@@ -1,4 +1,6 @@
+from a2wsgi import WSGIMiddleware
 from flask import Flask, render_template, request, redirect, url_for, flash, abort
+from dotenv import load_dotenv
 from models import db
 from repositories import FileRepository, SessionRepository, MessageRepository, FeedbackRepository
 from services import DocumentService, InterviewService, SessionService, FeedbackService
@@ -14,6 +16,8 @@ import os
 
 from client.ai_client import AIClient
 from client.gemini_provider import GeminiProvider
+
+load_dotenv()
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'dev-secret-key-change-in-production'
@@ -202,3 +206,5 @@ def feedback_page(session_id):
 
 if __name__ == '__main__':
     app.run(debug=True)
+else:
+    asgi_app = WSGIMiddleware(app)

@@ -10,6 +10,22 @@ class AIClient:
     def __init__(self, provider: AIProvider):
         self.provider = provider
 
+    async def generate_first_question(self, cv_text, job_desc, job_title, company_name) -> str:
+        prompt = PromptTemplates.first_question_generation(
+            cv_text=cv_text,
+            job_description=job_desc,
+            job_title=job_title,
+            company_name=company_name,
+        )
+        text = await self._generate(prompt)
+        
+        question = re.sub(r'^(Question:|Here\'s a question:)\s*', '', text.strip(), flags=re.I).strip('"\'')
+        
+        if not question:
+            raise AIServiceError("AI returned empty response")
+        
+        return question
+
     async def generate_interview_questions(self, cv_text, job_desc, job_title, company_name) -> list[str]:
         prompt = PromptTemplates.interview_question_generation(
             cv_text=cv_text,
