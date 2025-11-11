@@ -25,6 +25,55 @@
         <p class="text-center text-gray-600 mb-12">
             Practice interviews with AI. Get feedback on your performance and CV.
         </p>
+
+        {% if recent_sessions %}
+        <div class="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-8">
+            <h2 class="text-xl font-semibold mb-4">📋 Resume Your Sessions</h2>
+            
+            {% for session in recent_sessions %}
+            <div class="bg-white rounded-lg p-4 mb-3 flex justify-between items-center">
+                <div>
+                    <p class="font-semibold">{{ session.job_title }}</p>
+                    <p class="text-sm text-gray-600">{{ session.company_name }}</p>
+                    <p class="text-xs text-gray-400">
+                        Started {{ session.created_at.strftime('%B %d, %I:%M %p') }}
+                    </p>
+                </div>
+                
+                <div class="space-x-2">
+                    {% if session.feedback %}
+                        <!-- Session completed -->
+                        <a href="/session/{{ session.id }}/feedback" 
+                        class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
+                            View Results
+                        </a>
+                    {% elif session.messages|length > 0 %}
+                        <!-- Interview in progress -->
+                        <a href="/session/{{ session.id }}/interview" 
+                        class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                            Continue Interview
+                        </a>
+                    {% elif session.cv_text or session.job_description_text %}
+                        <!-- Partial upload -->
+                        <a href="/session/{{ session.id }}/upload" 
+                        class="bg-yellow-600 text-white px-4 py-2 rounded hover:bg-yellow-700">
+                            Complete Upload
+                        </a>
+                    {% else %}
+                        <!-- Just created, nothing done -->
+                        <a href="/session/{{ session.id }}/upload" 
+                        class="bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700">
+                            Start Upload
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <hr class="my-8">
+        {% endif %}
+
         
         <div class="bg-white rounded-lg shadow-md p-8">
             <h2 class="text-2xl font-semibold mb-6">Start Your Interview Prep</h2>

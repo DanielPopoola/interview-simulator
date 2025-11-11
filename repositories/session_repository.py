@@ -39,7 +39,10 @@ class SessionRepository:
         return session
 
     def get_all(self) -> list[Session]:
-        return Session.query.all()
+        return Session.query.options(
+        db.joinedload(Session.messages),
+        db.joinedload(Session.feedback)
+    ).order_by(Session.created_at.desc()).all()
     
     def delete(self, session_id: int) -> None:
         session = Session.query.get(session_id)

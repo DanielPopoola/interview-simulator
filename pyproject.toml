@@ -22,6 +22,10 @@ dependencies = [
     "pytest-cov>=7.0.0",
 ]
 
+[tool.setuptools]
+packages = ["client", "repositories", "services", "utils"]
+py_modules = ["app", "config", "exceptions", "models"]
+
 [tool.pytest.ini_options]
 filterwarnings = [
     "ignore:The global interpreter lock.*:RuntimeWarning",

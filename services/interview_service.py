@@ -70,7 +70,7 @@ class InterviewService:
             'is_complete': False,
             'question_count': question_count + 1
         }
-
+    
     
     def is_interview_complete(self, session_id: int) -> bool:
         question_count = self.message_repo.count_messages(session_id, role='assistant')

@@ -55,8 +55,10 @@ with app.app_context():
 
 @app.route('/')
 def index():
-    return render_template('index.html')
-
+    recent_sessions = session_service.get_all_sessions()
+    recent_sessions.sort(key=lambda s: s.created_at, reverse=True)
+    recent_sessions = recent_sessions[:5]
+    return render_template('index.html', recent_sessions=recent_sessions)
 
 @app.route('/session/create', methods=['POST'])
 def create_session():
