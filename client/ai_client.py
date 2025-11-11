@@ -25,21 +25,6 @@ class AIClient:
             raise AIServiceError("AI returned empty response")
         
         return question
-
-    def generate_interview_questions(self, cv_text, job_desc, job_title, company_name) -> list[str]:
-        prompt = PromptTemplates.interview_question_generation(
-            cv_text=cv_text,
-            job_description=job_desc,
-            job_title=job_title,
-            company_name=company_name,
-        )
-        text = self._generate(prompt)
-        questions = self._parse_json(text, expect_list=True)
-
-        if not (4 <= len(questions) <= 10):
-            raise AIServiceError(f"Unexpected question count: {len(questions)}")
-        
-        return questions[:8]
     
     def generate_followup_question(self, convo_history, cv_text, job_desc, question_count, max_questions=8) -> str:
         formatted = PromptTemplates.format_conversation_history(convo_history)

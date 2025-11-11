@@ -18,4 +18,12 @@ dependencies = [
     "uvicorn>=0.38.0",
     "a2wsgi>=1.10.10",
     "hypercorn>=0.18.0",
+    "pytest>=9.0.0",
+    "pytest-cov>=7.0.0",
+]
+
+[tool.pytest.ini_options]
+filterwarnings = [
+    "ignore:The global interpreter lock.*:RuntimeWarning",
+    "ignore:'_UnionGenericAlias' is deprecated.*:DeprecationWarning:google.genai.types",
 ]

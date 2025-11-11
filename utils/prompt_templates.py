@@ -1,47 +1,4 @@
 class PromptTemplates:
-
-    @staticmethod
-    def interview_question_generation(
-        cv_text: str,
-        job_description: str,
-        job_title: str,
-        company_name: str
-    ) -> str:
-        return f"""You are an experienced technical interviewer conducting 
-        an interview for the position of {job_title} at {company_name}.
-
-CANDIDATE'S CV:
-{cv_text[:2000]}
-
-JOB DESCRIPTION:
-{job_description[:2000]}
-
-Your task: Generate 6-8 relevant interview questions for this candidate.
-
-REQUIREMENTS:
-1. Questions should be tailored to BOTH the candidate's background AND the job requirements
-2. Mix different types:
-   - Technical skills assessment
-   - Experience-based questions
-   - Behavioral questions
-   - Questions about gaps or transitions in their CV
-3. Questions should be appropriate for the seniority level
-4. Be specific, not generic
-
-OUTPUT FORMAT:
-Return ONLY a JSON array of question strings. No other text.
-
-Example format:
-[
-  "I see you worked with Python for 3 years. Can you walk me through a challenging technical 
-  problem you solved using Python?",
-  "The job requires experience with microservices -
-  How have you designed or worked with microservices architectures?",
-  "Tell me about a time when you had to learn a new technology quickly - 
-  How did you approach it?"
-]
-
-Generate the questions now:"""
     
     @staticmethod
     def first_question_generation(

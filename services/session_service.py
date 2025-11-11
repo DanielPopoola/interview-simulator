@@ -4,8 +4,6 @@ from exceptions import  ValidationError, NotFoundError
 
 
 class SessionService:
-    """Business logic for interview sessions"""
-    
     def __init__(self, session_repository: SessionRepository):
         self.session_repo = session_repository
     
