@@ -4,11 +4,11 @@ FROM python:3.14-slim
 # Set working directory inside container
 WORKDIR /app
 
-# Copy dependency file first (for caching - I'll explain)
-COPY pyproject.toml ./
-
 # Install UV package manager
 RUN pip install uv
+
+# Copy dependency file first (for caching)
+COPY pyproject.toml uv.lock* ./
 
 # Install dependencies
 RUN uv pip install --system -e .

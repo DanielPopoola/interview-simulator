@@ -18,13 +18,16 @@ dependencies = [
     "uvicorn>=0.38.0",
     "a2wsgi>=1.10.10",
     "hypercorn>=0.18.0",
+]
+
+[project.optional-dependencies]
+dev = [
     "pytest>=9.0.0",
     "pytest-cov>=7.0.0",
 ]
 
 [tool.setuptools]
 packages = ["client", "repositories", "services", "utils"]
-py_modules = ["app", "exceptions", "models"]
 
 [tool.pytest.ini_options]
 filterwarnings = [
