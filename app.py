@@ -19,12 +19,12 @@ from client.gemini_provider import GeminiProvider
 load_dotenv()
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'dev-secret-key-change-in-production'
+app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'dev-secret-key-change-in-production')
 app.config['UPLOAD_FOLDER'] = 'uploads'
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
 
 # Database configuration
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///interview_simulator.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL', 'sqlite:///interview_simulator.db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)

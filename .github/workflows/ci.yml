@@ -1,0 +1,49 @@
+name: CI/CD Pipeline
+
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.14'
+      
+      - name: Install dependencies
+        run: |
+          pip install uv
+          uv venv .venv && \
+          source .venv/bin/activate && \
+          uv pip install --system -e ".[dev]"
+      
+      - name: Run tests
+        run: source .venv/bin/activate && \
+             pytest --cov=services --cov=utils
+      
+      - name: Lint with ruff
+        run: ruff check .
+
+  deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/master'
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Deploy to production
+        run: |
+          # Your deployment commands here
+          echo "Deploying to production..."
