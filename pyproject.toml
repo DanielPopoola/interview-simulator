@@ -24,7 +24,7 @@ dependencies = [
 
 [tool.setuptools]
 packages = ["client", "repositories", "services", "utils"]
-py_modules = ["app", "config", "exceptions", "models"]
+py_modules = ["app", "exceptions", "models"]
 
 [tool.pytest.ini_options]
 filterwarnings = [
