@@ -37,6 +37,19 @@ class SessionRepository:
         session.job_description_text = job_description
         db.session.commit()
         return session
+    
+    # repositories/session_repository.py
+
+    def get_by_ids(self, session_ids: list[int]) -> list[Session]:
+        if not session_ids:
+            return []
+        
+        return Session.query.filter(
+            Session.id.in_(session_ids)
+        ).options(
+            db.joinedload(Session.messages),
+            db.joinedload(Session.feedback)
+        ).order_by(Session.created_at.desc()).all()
 
     def get_all(self) -> list[Session]:
         return Session.query.options(

@@ -6,9 +6,9 @@ RUN pip install uv
 
 COPY pyproject.toml uv.lock* ./
 
-RUN uv pip install --system .
-
-
+RUN uv pip compile pyproject.toml -o requirements.txt && \
+    uv pip install --system -r requirements.txt
+    
 COPY . .
 
 EXPOSE 8000

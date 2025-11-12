@@ -37,6 +37,9 @@ class SessionService:
     
     def delete_session(self, session_id: int) -> None:
         self.session_repo.delete(session_id)
+
+    def get_sessions_by_ids(self, session_ids: list[int]) -> list[Session]:
+        return self.session_repo.get_by_ids(session_ids)
     
     def get_full_session_details(self, session_id: int) -> dict:
         session_with_messages = self.session_repo.get_session_with_messages(session_id)

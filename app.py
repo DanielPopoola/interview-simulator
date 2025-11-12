@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, abort
+from flask import session as flask_session
 from dotenv import load_dotenv
 from models import db
 from repositories import FileRepository, SessionRepository, MessageRepository, FeedbackRepository
@@ -53,10 +54,18 @@ feedback_service = FeedbackService(session_repository, message_repository, feedb
 with app.app_context():
     db.create_all()
 
+
+def check_session_ownership(session_id):
+    my_sessions = flask_session.get('my_sessions', [])
+    if session_id not in my_sessions:
+        abort(403, "You don't have access to this session")
+
 @app.route('/')
 def index():
-    recent_sessions = session_service.get_all_sessions()
-    recent_sessions.sort(key=lambda s: s.created_at, reverse=True)
+    my_session_ids = flask_session.get('my_sessions', [])
+    
+    recent_sessions = session_service.get_sessions_by_ids(my_session_ids)
+    
     recent_sessions = recent_sessions[:5]
     return render_template('index.html', recent_sessions=recent_sessions)
 
@@ -66,9 +75,13 @@ def create_session():
         job_title = request.form.get('job_title', '')
         company_name = request.form.get('company_name', '')
         
-        session = session_service.create_session(job_title, company_name)
+        new_session = session_service.create_session(job_title, company_name)
+    
+        if 'my_sessions' not in flask_session:
+            flask_session['my_sessions'] = []
+        flask_session['my_sessions'].append(new_session.id)
         
-        return redirect(url_for('upload_page', session_id=session.id))
+        return redirect(url_for('upload_page', session_id=new_session.id))
     
     except ValueError as e:
         flash(str(e), 'error')
@@ -82,6 +95,7 @@ def create_session():
 
 @app.route('/session/<int:session_id>/upload')
 def upload_page(session_id):
+    check_session_ownership(session_id)
     try:
         session = session_service.get_session(session_id)
         return render_template('upload.html', session=session)
@@ -138,6 +152,7 @@ def upload_job_description(session_id):
 
 @app.route('/session/<int:session_id>/interview')
 def interview_page(session_id):
+    check_session_ownership(session_id)
     try:
         session = session_service.get_session(session_id)
         if not session_service.is_ready_for_interview(session_id):
@@ -198,6 +213,7 @@ def complete_interview(session_id):
 
 @app.route('/session/<int:session_id>/feedback')
 def feedback_page(session_id):
+    check_session_ownership(session_id)
     try:
         feedback = feedback_service.get_feedback(session_id)
         session = session_service.get_session(session_id)
