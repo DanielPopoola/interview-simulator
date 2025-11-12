@@ -38,8 +38,6 @@ class SessionRepository:
         db.session.commit()
         return session
     
-    # repositories/session_repository.py
-
     def get_by_ids(self, session_ids: list[int]) -> list[Session]:
         if not session_ids:
             return []

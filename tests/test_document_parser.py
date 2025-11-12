@@ -1,9 +1,6 @@
-from pathlib import Path
 from exceptions import DocumentParsingError
 from unittest.mock import patch, MagicMock
 import pytest
-import pdfplumber
-from docx import Document
 
 
 from utils.document_parser import DocumentParser

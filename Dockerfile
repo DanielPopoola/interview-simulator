@@ -2,13 +2,11 @@ FROM python:3.14-slim
 
 WORKDIR /app
 
-RUN pip install uv
 
-COPY pyproject.toml uv.lock* ./
+COPY requirements.txt .
 
-RUN uv pip compile pyproject.toml -o requirements.txt && \
-    uv pip install --system -r requirements.txt
-    
+RUN pip install -r requirements.txt
+
 COPY . .
 
 EXPOSE 8000
