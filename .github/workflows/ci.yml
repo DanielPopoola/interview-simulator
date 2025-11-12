@@ -21,16 +21,14 @@ jobs:
       
       - name: Install dependencies
         run: |
-          pip Install -r requirements.txt
+          pip install -r requirements.txt
         
       - name: Run tests
         run: |
-          source .venv/bin/activate
           pytest --cov=services --cov=utils
       
       - name: Lint with ruff
         run: |
-          source .venv/bin/activate
           ruff check .
 
   deploy:
