@@ -15,7 +15,7 @@ import os
 
 
 from client.ai_client import AIClient
-from client.gemini_provider import GeminiProvider
+from client.openrouter_provider import OpenRouterProvider
 
 load_dotenv()
 
@@ -39,11 +39,16 @@ message_repository = MessageRepository()
 feedback_repository = FeedbackRepository()
 
 # AI Client
-gemini_provider = GeminiProvider(
-    api_key=os.getenv('GEMINI_API_KEY', ""),
-    model_name='gemini-2.5-flash'
+#gemini_provider = GeminiProvider(
+    #api_key=os.getenv('GEMINI_API_KEY', ""),
+    #model_name='gemini-2.5-flash'
+#)
+
+openrouter_provider = OpenRouterProvider(
+    api_key=os.getenv('OPENROUTER_API_KEY', ""),
+    model_name='openai/gpt-oss-20b:free'
 )
-ai_client = AIClient(gemini_provider)
+ai_client = AIClient(openrouter_provider)
 
 # Services
 session_service = SessionService(session_repository)
