@@ -51,7 +51,7 @@ def mock_dependencies(monkeypatch):
             return "A" * 200
         
 
-    monkeypatch.setattr("services.document_service.DocumentParser", MockParser)
+    monkeypatch.setattr("app.services.document_service.DocumentParser", MockParser)
 
     return MockSessionRepository(), MockFileRepository()
 
@@ -85,14 +85,14 @@ class TestDocumentService:
             document_service.upload_cv(99, DummyFile())
 
     def test_upload_cv_invalid_text_short(self, document_service, monkeypatch):
-        monkeypatch.setattr("services.document_service.DocumentParser.extract_text", lambda _: "too short")
+        monkeypatch.setattr("app.services.document_service.DocumentParser.extract_text", lambda _: "too short")
 
         with pytest.raises(ValidationError, match="too short"):
             document_service.upload_cv(1, DummyFile())
 
     def test_upload_cv_always_deletes_file_on_error(self, document_service, mock_dependencies, monkeypatch):
         _, file_repo = mock_dependencies
-        monkeypatch.setattr("services.document_service.DocumentParser.extract_text", lambda _: "too short")
+        monkeypatch.setattr("app.services.document_service.DocumentParser.extract_text", lambda _: "too short")
 
         with pytest.raises(ValidationError):
             document_service.upload_cv(1, DummyFile())
