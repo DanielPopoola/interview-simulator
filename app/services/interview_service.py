@@ -1,4 +1,4 @@
-from repositories import SessionRepository, MessageRepository
+from app.repositories import SessionRepository, MessageRepository
 from client.ai_client import AIClient
 from app.exceptions import ValidationError, NotFoundError
 

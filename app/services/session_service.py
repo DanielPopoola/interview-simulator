@@ -1,4 +1,4 @@
-from repositories.session_repository import SessionRepository
+from app.repositories.session_repository import SessionRepository
 from app.models import Session
 from app.exceptions import ValidationError, NotFoundError
 

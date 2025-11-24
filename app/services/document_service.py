@@ -1,4 +1,4 @@
-from repositories import FileRepository, SessionRepository
+from app.repositories import FileRepository, SessionRepository
 from utils.document_parser import DocumentParser
 from app.models import Session
 from app.exceptions import ValidationError, NotFoundError
