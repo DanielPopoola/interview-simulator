@@ -7,7 +7,6 @@ from .errors import register_error_handlers
 
 def register_routes(app):
     app.register_blueprint(session_bp)
-    app.register_blueprint(session_bp)
     app.register_blueprint(interview_bp)
     app.register_blueprint(feedback_bp)
     app.register_blueprint(document_bp)
