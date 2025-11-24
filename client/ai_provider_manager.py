@@ -1,6 +1,6 @@
 import time
 
-from exceptions import AIServiceError
+from app.exceptions import AIServiceError
 
 
 class ProviderManager:

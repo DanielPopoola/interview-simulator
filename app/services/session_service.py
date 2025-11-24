@@ -1,6 +1,6 @@
 from repositories.session_repository import SessionRepository
-from models import Session
-from exceptions import ValidationError, NotFoundError
+from app.models import Session
+from app.exceptions import ValidationError, NotFoundError
 
 
 class SessionService:

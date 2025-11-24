@@ -1,5 +1,5 @@
 from pathlib import Path
-from exceptions import DocumentParsingError
+from app.exceptions import DocumentParsingError
 
 
 class DocumentParser:

@@ -1,10 +1,10 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, abort
 from flask import session as flask_session
 from dotenv import load_dotenv
-from models import db
+from app.models import db
 from repositories import FileRepository, SessionRepository, MessageRepository, FeedbackRepository
 from services import DocumentService, InterviewService, SessionService, FeedbackService
-from exceptions import (
+from app.exceptions import (
     ValidationError, 
     NotFoundError, 
     DocumentParsingError, 
@@ -40,11 +40,6 @@ file_repository = FileRepository(app.config['UPLOAD_FOLDER'])
 message_repository = MessageRepository()
 feedback_repository = FeedbackRepository()
 
-# AI Client
-#gemini_provider = GeminiProvider(
-    #api_key=os.getenv('GEMINI_API_KEY', ""),
-    #model_name='gemini-2.5-flash'
-#)
 
 providers = [
     OpenRouterProvider(api_key=os.getenv('OPENROUTER_API_KEY', ""),

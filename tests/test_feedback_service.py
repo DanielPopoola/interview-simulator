@@ -1,6 +1,6 @@
 import pytest
-from exceptions import ValidationError, NotFoundError
-from services.feedback_service import FeedbackService
+from app.exceptions import ValidationError, NotFoundError
+from app.services.feedback_service import FeedbackService
 
 
 @pytest.fixture

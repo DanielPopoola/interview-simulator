@@ -1,6 +1,6 @@
 import pytest
-from exceptions import ValidationError, NotFoundError
-from services.interview_service import InterviewService
+from app.exceptions import ValidationError, NotFoundError
+from app.services.interview_service import InterviewService
 
 
 @pytest.fixture

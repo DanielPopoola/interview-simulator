@@ -1,6 +1,6 @@
 from repositories import SessionRepository, MessageRepository
 from client.ai_client import AIClient
-from exceptions import ValidationError, NotFoundError
+from app.exceptions import ValidationError, NotFoundError
 
 
 class InterviewService:

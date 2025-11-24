@@ -1,4 +1,4 @@
-from models import db, Feedback
+from app.models import db, Feedback
 
 
 class FeedbackRepository:

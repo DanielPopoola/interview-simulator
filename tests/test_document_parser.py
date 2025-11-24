@@ -1,4 +1,4 @@
-from exceptions import DocumentParsingError
+from app.exceptions import DocumentParsingError
 from unittest.mock import patch, MagicMock
 import pytest
 

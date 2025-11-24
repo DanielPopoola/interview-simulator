@@ -2,7 +2,7 @@ import os
 import logging
 from werkzeug.utils import secure_filename
 from datetime import datetime
-from exceptions import ValidationError
+from app.exceptions import ValidationError
 
 
 logger = logging.getLogger(__name__)

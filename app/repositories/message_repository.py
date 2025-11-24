@@ -1,5 +1,5 @@
-from models import db, Message, Session
-from exceptions import ValidationError, NotFoundError
+from app.models import db, Message, Session
+from app.exceptions import ValidationError, NotFoundError
 
 
 class MessageRepository:

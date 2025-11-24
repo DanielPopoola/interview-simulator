@@ -1,5 +1,5 @@
-from models import db, Session
-from exceptions import NotFoundError
+from app.models import db, Session
+from app.exceptions import NotFoundError
 
 
 class SessionRepository:

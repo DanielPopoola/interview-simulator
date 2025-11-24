@@ -1,6 +1,6 @@
 import json
 import re
-from exceptions import AIServiceError
+from app.exceptions import AIServiceError
 from tenacity import (
     retry,
     stop_after_attempt,

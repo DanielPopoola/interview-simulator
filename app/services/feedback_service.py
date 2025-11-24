@@ -1,7 +1,7 @@
 from client.ai_client import AIClient
-from models import Feedback
+from app.models import Feedback
 from repositories import FeedbackRepository, MessageRepository, SessionRepository
-from exceptions import ValidationError, NotFoundError
+from app.exceptions import ValidationError, NotFoundError
 
 
 class FeedbackService:

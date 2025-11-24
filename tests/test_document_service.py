@@ -1,6 +1,6 @@
 import pytest
-from exceptions import ValidationError, NotFoundError
-from services.document_service import DocumentService
+from app.exceptions import ValidationError, NotFoundError
+from app.services.document_service import DocumentService
 
 
 @pytest.fixture

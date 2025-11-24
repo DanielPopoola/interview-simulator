@@ -1,6 +1,6 @@
 import pytest
-from exceptions import ValidationError, NotFoundError
-from services.session_service import SessionService
+from app.exceptions import ValidationError, NotFoundError
+from app.services.session_service import SessionService
 
 
 @pytest.fixture
