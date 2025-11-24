@@ -1,7 +1,11 @@
 import requests
 import json
-from tenacity import retry, stop_after_attempt, wait_exponential, retry_if_exception_type
-
+from tenacity import (
+    retry,
+    stop_after_attempt,
+    wait_exponential,
+    retry_if_exception_type,
+)
 
 
 class OpenRouterProvider:
@@ -19,24 +23,30 @@ class OpenRouterProvider:
     @retry(
         stop=stop_after_attempt(3),
         wait=wait_exponential(multiplier=1, min=2, max=10),
-        retry=retry_if_exception_type((requests.RequestException, ConnectionError, TimeoutError))
+        retry=retry_if_exception_type(
+            (requests.RequestException, ConnectionError, TimeoutError)
+        ),
     )
     def generate_text(self, prompt: str) -> str:
         payload = {
             "model": self.model_name,
             "messages": [{"role": "user", "content": prompt}],
-            "extra_body": {"reasoning": {"enabled": True}}
+            "extra_body": {"reasoning": {"enabled": True}},
         }
 
-        response = requests.post(self.endpoint, headers=self._headers, data=json.dumps(payload))
-        
+        response = requests.post(
+            self.endpoint, headers=self._headers, data=json.dumps(payload)
+        )
+
         if response.status_code != 200:
-            raise RuntimeError(f"OpenRouter API error: {response.status_code} - {response.text}")
+            raise RuntimeError(
+                f"OpenRouter API error: {response.status_code} - {response.text}"
+            )
 
         data = response.json()
         try:
-            message = data['choices'][0]['message']
-            text = message.get('content')
+            message = data["choices"][0]["message"]
+            text = message.get("content")
         except (KeyError, IndexError):
             raise RuntimeError("Malformed response from OpenRouter API")
 
