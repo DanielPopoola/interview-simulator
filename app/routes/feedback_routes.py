@@ -12,29 +12,12 @@ bp = Blueprint("feedback", __name__, url_prefix="/session")
 
 
 def _get_feedback_service():
-    from client.ai_client import AIClient
-    from client.ai_provider_manager import ProviderManager
-    from client.gemini_provider import GeminiProvider
-    from client.openrouter_provider import OpenRouterProvider
-    import os
-
-    providers = [
-        OpenRouterProvider(
-            api_key=os.getenv("OPENROUTER_API_KEY", ""),
-            model_name="openai/gpt-oss-20b:free",
-        ),
-        GeminiProvider(
-            api_key=os.getenv("GEMINI_API_KEY", ""), model_name="gemini-2.5-flash"
-        ),
-    ]
-
-    provider_manager = ProviderManager(providers)
-    ai_client = AIClient(provider_manager)
-
+    from ..extensions import get_ai_client
+    
     session_repo = SessionRepository()
     message_repo = MessageRepository()
     feedback_repo = FeedbackRepository()
-
+    ai_client = get_ai_client()
     return FeedbackService(session_repo, message_repo, feedback_repo, ai_client)
 
 

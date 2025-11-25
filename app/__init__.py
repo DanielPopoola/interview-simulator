@@ -22,6 +22,9 @@ def create_app(config_object=None):
 
     db.init_app(app)
 
+    from .extensions import init_ai_providers
+    init_ai_providers(app)
+    
     register_routes(app)
 
     with app.app_context():

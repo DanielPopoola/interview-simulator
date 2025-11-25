@@ -11,40 +11,19 @@ bp = Blueprint("interview", __name__, url_prefix="/session")
 
 
 def _get_interview_service():
-    from client.ai_client import AIClient
-    from client.ai_provider_manager import ProviderManager
-    from client.gemini_provider import GeminiProvider
-    from client.openrouter_provider import OpenRouterProvider
-    import os
-
-    providers = [
-        OpenRouterProvider(
-            api_key=os.getenv("OPENROUTER_API_KEY", ""),
-            model_name="openai/gpt-oss-20b:free",
-        ),
-        GeminiProvider(
-            api_key=os.getenv("GEMINI_API_KEY", ""), model_name="gemini-2.5-flash"
-        ),
-    ]
-
-    provider_manager = ProviderManager(providers)
-    ai_client = AIClient(provider_manager)
-
+    from ..extensions import get_ai_client
     session_repo = SessionRepository()
     message_repo = MessageRepository()
-
+    ai_client = get_ai_client()
     return InterviewService(session_repo, message_repo, ai_client)
-
 
 def _get_session_service():
     return SessionService(SessionRepository())
-
 
 def _check_session_ownership(session_id):
     my_sessions = flask_session.get("my_sessions", [])
     if session_id not in my_sessions:
         abort(403, "You don't have access to this session")
-
 
 @bp.route("/<int:session_id>/interview")
 def interview_page(session_id):
