@@ -13,7 +13,7 @@ bp = Blueprint("feedback", __name__, url_prefix="/session")
 
 def _get_feedback_service():
     from ..extensions import get_ai_client
-    
+
     session_repo = SessionRepository()
     message_repo = MessageRepository()
     feedback_repo = FeedbackRepository()

@@ -20,7 +20,7 @@ class ProviderManager:
             if not self._is_available(provider):
                 continue
 
-            try:
+            try:    
                 return provider.generate_text(prompt)
             except Exception as e:
                 last_error = e
