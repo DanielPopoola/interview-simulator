@@ -1,104 +1,123 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Interview Simulator</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
-</head>
-<body class="bg-gray-50 min-h-screen">
-    {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-            <div class="container mx-auto px-4 pt-4 max-w-4xl">
-                {% for category, message in messages %}
-                    <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-                        {{ message }}
-                    </div>
-                {% endfor %}
-            </div>
-        {% endif %}
-    {% endwith %}
-    
-    <div class="container mx-auto px-4 py-16 max-w-4xl">
-        <h1 class="text-4xl font-bold text-center mb-4">AI Interview Simulator</h1>
-        <p class="text-center text-gray-600 mb-12">
-            Practice interviews with AI. Get feedback on your performance and CV.
+{% extends "base.html" %}
+
+{% block title %}Home - AI Interview Simulator{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <!-- Hero Section -->
+    <div class="text-center mb-5">
+        <h1 style="margin-bottom: 1rem;">🎯 AI Interview Simulator</h1>
+        <p style="font-size: 1.25rem; color: var(--gray-600); max-width: 600px; margin: 0 auto;">
+            Practice interviews with AI-powered feedback. Improve your performance and optimize your CV for your dream job.
         </p>
+    </div>
 
-        {% if recent_sessions %}
-        <div class="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-8">
-            <h2 class="text-xl font-semibold mb-4">📋 Resume Your Sessions</h2>
-            
-            {% for session in recent_sessions %}
-            <div class="bg-white rounded-lg p-4 mb-3 flex justify-between items-center">
-                <div>
-                    <p class="font-semibold">{{ session.job_title }}</p>
-                    <p class="text-sm text-gray-600">{{ session.company_name }}</p>
-                    <p class="text-xs text-gray-400">
-                        Started {{ session.created_at.strftime('%B %d, %I:%M %p') }}
-                    </p>
-                </div>
-                
-                <div class="space-x-2">
-                    {% if session.feedback %}
-                        <!-- Session completed -->
-                        <a href="/session/{{ session.id }}/feedback" 
-                        class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
-                            View Results
-                        </a>
-                    {% elif session.messages|length > 0 %}
-                        <!-- Interview in progress -->
-                        <a href="/session/{{ session.id }}/interview" 
-                        class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
-                            Continue Interview
-                        </a>
-                    {% elif session.cv_text or session.job_description_text %}
-                        <!-- Partial upload -->
-                        <a href="/session/{{ session.id }}/upload" 
-                        class="bg-yellow-600 text-white px-4 py-2 rounded hover:bg-yellow-700">
-                            Complete Upload
-                        </a>
-                    {% else %}
-                        <!-- Just created, nothing done -->
-                        <a href="/session/{{ session.id }}/upload" 
-                        class="bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700">
-                            Start Upload
-                        </a>
-                    {% endif %}
-                </div>
-            </div>
-            {% endfor %}
-        </div>
-
-        <hr class="my-8">
-        {% endif %}
-
+    <!-- Recent Sessions Section -->
+    {% if recent_sessions %}
+    <div class="card" style="background: linear-gradient(135deg, #dbeafe 0%, #e0e7ff 100%); border: none;">
+        <h2 style="margin-bottom: 1.5rem;">📋 Resume Your Sessions</h2>
         
-        <div class="bg-white rounded-lg shadow-md p-8">
-            <h2 class="text-2xl font-semibold mb-6">Start Your Interview Prep</h2>
+        {% for session in recent_sessions %}
+        <div class="card" style="margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center;">
+            <div>
+                <h3 style="margin-bottom: 0.5rem; font-size: 1.25rem;">{{ session.job_title }}</h3>
+                <p style="color: var(--gray-600); margin-bottom: 0.25rem;">{{ session.company_name }}</p>
+                <p style="color: var(--gray-400); font-size: 0.875rem; margin: 0;">
+                    Started {{ session.created_at.strftime('%B %d, %I:%M %p') }}
+                </p>
+            </div>
             
-            <form action="/session/create" method="POST" class="space-y-4">
-                <div>
-                    <label class="block text-sm font-medium mb-2">Job Title</label>
-                    <input type="text" name="job_title" required
-                           class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
-                           placeholder="e.g., Senior Python Developer">
-                </div>
-                
-                <div>
-                    <label class="block text-sm font-medium mb-2">Company Name</label>
-                    <input type="text" name="company_name" required
-                           class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
-                           placeholder="e.g., Google">
-                </div>
-                
-                <button type="submit" 
-                        class="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition">
-                    Create Interview Session
-                </button>
-            </form>
+            <div>
+                {% if session.feedback %}
+                    <!-- Session completed -->
+                    <a href="{{ url_for('feedback.feedback_page', session_id=session.id) }}" 
+                       class="btn btn-success">
+                        View Results
+                    </a>
+                {% elif session.messages|length > 0 %}
+                    <!-- Interview in progress -->
+                    <a href="{{ url_for('interview.interview_page', session_id=session.id) }}" 
+                       class="btn btn-primary">
+                        Continue Interview
+                    </a>
+                {% elif session.cv_text or session.job_description_text %}
+                    <!-- Partial upload -->
+                    <a href="{{ url_for('document.upload_page', session_id=session.id) }}" 
+                       class="btn btn-warning">
+                        Complete Upload
+                    </a>
+                {% else %}
+                    <!-- Just created, nothing done -->
+                    <a href="{{ url_for('document.upload_page', session_id=session.id) }}" 
+                       class="btn" style="background: var(--gray-600); color: white;">
+                        Start Upload
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Create New Session Card -->
+    <div class="card">
+        <div class="card-header">
+            <h2>Start Your Interview Prep</h2>
+            <p style="color: var(--gray-600); margin: 0;">
+                Create a new interview session to begin practicing
+            </p>
+        </div>
+        
+        <form action="{{ url_for('session.create_session') }}" method="POST">
+            <div class="form-group">
+                <label for="job_title">Job Title</label>
+                <input type="text" 
+                       id="job_title"
+                       name="job_title" 
+                       required
+                       placeholder="e.g., Senior Python Developer">
+            </div>
+            
+            <div class="form-group">
+                <label for="company_name">Company Name</label>
+                <input type="text" 
+                       id="company_name"
+                       name="company_name" 
+                       required
+                       placeholder="e.g., Google">
+            </div>
+            
+            <button type="submit" class="btn btn-primary btn-lg btn-block">
+                Create Interview Session →
+            </button>
+        </form>
+    </div>
+
+    <!-- Feature Cards -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-top: 2rem;">
+        <div class="card" style="text-align: center;">
+            <div style="font-size: 3rem; margin-bottom: 1rem;">📄</div>
+            <h3 style="font-size: 1.25rem;">Upload Your CV</h3>
+            <p style="color: var(--gray-600); margin: 0;">
+                Support for PDF, DOCX, and TXT formats
+            </p>
+        </div>
+        
+        <div class="card" style="text-align: center;">
+            <div style="font-size: 3rem; margin-bottom: 1rem;">🤖</div>
+            <h3 style="font-size: 1.25rem;">AI Interview</h3>
+            <p style="color: var(--gray-600); margin: 0;">
+                Practice with adaptive AI questions
+            </p>
+        </div>
+        
+        <div class="card" style="text-align: center;">
+            <div style="font-size: 3rem; margin-bottom: 1rem;">💡</div>
+            <h3 style="font-size: 1.25rem;">Get Feedback</h3>
+            <p style="color: var(--gray-600); margin: 0;">
+                Detailed analysis and CV optimization tips
+            </p>
         </div>
     </div>
-</body>
-</html>
+</div>
+{% endblock %}
