@@ -28,7 +28,6 @@ def _check_session_ownership(session_id):
 @bp.route("/<int:session_id>/upload")
 def upload_page(session_id):
     _check_session_ownership(session_id)
-
     try:
         from ..services.session_service import SessionService
         from ..repositories.session_repository import SessionRepository

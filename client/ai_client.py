@@ -79,7 +79,7 @@ class AIClient:
 
     def _generate(self, prompt: str) -> str:
         try:
-            return self.provider_manager.generate(prompt)
+            return self.provider_manager.generate_text(prompt)
         except Exception as e:
             raise AIServiceError(f"AI generation failed: {e}")
 
