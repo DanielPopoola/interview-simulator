@@ -8,7 +8,7 @@ An intelligent interview preparation platform that helps job seekers practice in
 
 ## 🌟 Features
 
-- **📄 Document Analysis**: Upload your CV (PDF, DOCX, TXT) and job descriptions
+- **📄 Document Analysis**: Upload your CV (PDF, DOCX, TXT) and job descriptions.
 - **🤖 AI-Powered Interviews**: Engage in realistic mock interviews with adaptive questioning from multiple AI providers (Gemini, OpenRouter).
 - **💡 Smart Feedback**: Receive detailed performance analysis and actionable insights.
 - **✨ CV Optimization**: Get specific suggestions to tailor your CV for target roles.
@@ -45,30 +45,16 @@ An intelligent interview preparation platform that helps job seekers practice in
    # Copy example env file
    cp .env.example .env
    
-<<<<<<< HEAD
    # Edit .env and add your API key(s)
    GEMINI_API_KEY=your_gemini_api_key_here
    OPENROUTER_API_KEY=your_openrouter_api_key_here
-=======
-   # Edit .env and add your API key
-   OPENROUTER_API_KEY=your_api_key
-   GEMINI_API_KEY=your_api_key_here
->>>>>>> 8f938849b69284809c897c0d5df9245b2c1fb881
    SECRET_KEY=your_random_secret_key
    DATABASE_URL=sqlite:///instance/app.db
    ```
 
 4. **Run the application**
    ```bash
-<<<<<<< HEAD
    flask run
-=======
-   python app.py
-
-   **OR**
-
-   gunicorn wsgi:app --workers 4
->>>>>>> 8f938849b69284809c897c0d5df9245b2c1fb881
    ```
 
 5. **Open your browser**
@@ -91,8 +77,8 @@ docker-compose up --build
 Start by entering the job title and company name you're preparing for.
 
 ### 2. Upload Documents
-- **CV Upload**: Upload your resume (PDF, DOCX, or TXT format)
-- **Job Description**: Paste the full job posting
+- **CV Upload**: Upload your resume (PDF, DOCX, or TXT format).
+- **Job Description**: Paste the full job posting.
 
 ### 3. Interview Practice
 - Answer up to 8 AI-generated questions tailored to your background and the role.
@@ -104,7 +90,7 @@ Receive comprehensive analysis including:
 - **Performance Score** (1-10)
 - **Strengths**: What you did well
 - **Areas to Improve**: Specific suggestions
-- **CV Optimization**: Tailored recommendations for the role
+- **CV Optimization**: Tailored recommendations for the role.
 
 ## 🏗️ Architecture
 
@@ -112,11 +98,7 @@ Receive comprehensive analysis including:
 ┌─────────────────────────────────────────┐
 │         Flask Application               │
 │  ┌──────────────────────────────────┐  │
-<<<<<<< HEAD
 │  │     Routes (app/routes)          │  │
-=======
-│  │          Routes                  │  │
->>>>>>> 8f938849b69284809c897c0d5df9245b2c1fb881
 │  └──────────┬───────────────────────┘  │
 │             ↓                            │
 │  ┌──────────────────────────────────┐  │
@@ -157,15 +139,9 @@ Receive comprehensive analysis including:
 - **SQLite**: Development database
 
 ### AI Integration
-<<<<<<< HEAD
 - **Google Gemini & OpenRouter**: Powers interview generation and feedback analysis.
 - **Provider Pattern**: Easily switch between or add new AI providers.
 - **Tenacity**: Retry logic for API reliability.
-=======
-- **Google Gemini API**: Powers interview generation and feedback analysis
-- **OpenRouter API**: Additional AI provider for multi-provider support
-- **Tenacity**: Retry logic for API reliability
->>>>>>> 8f938849b69284809c897c0d5df9245b2c1fb881
 
 ### Frontend
 - **HTMX**: Dynamic interactions without complex JavaScript.
@@ -333,13 +309,13 @@ CREATE TABLE feedback (
 
 ## 📝 License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License.
 
 ## 🙏 Acknowledgments
 
-- **Google Gemini** for powering the AI capabilities
-- **Flask** community for excellent documentation
-- **HTMX** for simplifying frontend interactions
+- **Google Gemini** & **OpenRouter** for powering the AI capabilities.
+- **Flask** community for excellent documentation.
+- **HTMX** for simplifying frontend interactions.
 
 ## 📧 Contact
 
