@@ -46,6 +46,7 @@ An intelligent interview preparation platform that helps job seekers practice in
    cp .env.example .env
    
    # Edit .env and add your API key
+   OPENROUTER_API_KEY=your_api_key
    GEMINI_API_KEY=your_api_key_here
    SECRET_KEY=your_random_secret_key
    DATABASE_URL=sqlite:///instance/app.db
@@ -54,6 +55,10 @@ An intelligent interview preparation platform that helps job seekers practice in
 4. **Run the application**
    ```bash
    python app.py
+
+   **OR**
+
+   gunicorn wsgi:app --workers 4
    ```
 
 5. **Open your browser**
