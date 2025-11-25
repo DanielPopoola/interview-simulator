@@ -45,16 +45,30 @@ An intelligent interview preparation platform that helps job seekers practice in
    # Copy example env file
    cp .env.example .env
    
+<<<<<<< HEAD
    # Edit .env and add your API key(s)
    GEMINI_API_KEY=your_gemini_api_key_here
    OPENROUTER_API_KEY=your_openrouter_api_key_here
+=======
+   # Edit .env and add your API key
+   OPENROUTER_API_KEY=your_api_key
+   GEMINI_API_KEY=your_api_key_here
+>>>>>>> 8f938849b69284809c897c0d5df9245b2c1fb881
    SECRET_KEY=your_random_secret_key
    DATABASE_URL=sqlite:///instance/app.db
    ```
 
 4. **Run the application**
    ```bash
+<<<<<<< HEAD
    flask run
+=======
+   python app.py
+
+   **OR**
+
+   gunicorn wsgi:app --workers 4
+>>>>>>> 8f938849b69284809c897c0d5df9245b2c1fb881
    ```
 
 5. **Open your browser**
@@ -98,7 +112,11 @@ Receive comprehensive analysis including:
 ┌─────────────────────────────────────────┐
 │         Flask Application               │
 │  ┌──────────────────────────────────┐  │
+<<<<<<< HEAD
 │  │     Routes (app/routes)          │  │
+=======
+│  │          Routes                  │  │
+>>>>>>> 8f938849b69284809c897c0d5df9245b2c1fb881
 │  └──────────┬───────────────────────┘  │
 │             ↓                            │
 │  ┌──────────────────────────────────┐  │
@@ -139,9 +157,15 @@ Receive comprehensive analysis including:
 - **SQLite**: Development database
 
 ### AI Integration
+<<<<<<< HEAD
 - **Google Gemini & OpenRouter**: Powers interview generation and feedback analysis.
 - **Provider Pattern**: Easily switch between or add new AI providers.
 - **Tenacity**: Retry logic for API reliability.
+=======
+- **Google Gemini API**: Powers interview generation and feedback analysis
+- **OpenRouter API**: Additional AI provider for multi-provider support
+- **Tenacity**: Retry logic for API reliability
+>>>>>>> 8f938849b69284809c897c0d5df9245b2c1fb881
 
 ### Frontend
 - **HTMX**: Dynamic interactions without complex JavaScript.
