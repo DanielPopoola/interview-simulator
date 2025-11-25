@@ -102,7 +102,7 @@ Receive comprehensive analysis including:
 ┌─────────────────────────────────────────┐
 │         Flask Application               │
 │  ┌──────────────────────────────────┐  │
-│  │     Routes (app.py)              │  │
+│  │          Routes                  │  │
 │  └──────────┬───────────────────────┘  │
 │             ↓                            │
 │  ┌──────────────────────────────────┐  │
@@ -144,6 +144,7 @@ Receive comprehensive analysis including:
 
 ### AI Integration
 - **Google Gemini API**: Powers interview generation and feedback analysis
+- **OpenRouter API**: Additional AI provider for multi-provider support
 - **Tenacity**: Retry logic for API reliability
 
 ### Frontend
