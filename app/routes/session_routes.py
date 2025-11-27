@@ -31,9 +31,10 @@ def create_session():
         session_service = _get_session_service()
         new_session = session_service.create_session(job_title, company_name)
 
-        if "my_sessions" not in flask_session:
-            flask_session["my_sessions"] = []
-        flask_session["my_sessions"].append(new_session.id)
+        my_sessions = flask_session.get("my_sessions", [])
+        my_sessions.append(new_session.id)
+        flask_session["my_sessions"] = my_sessions  # Reassign to trigger save
+        flask_session.modified = True
 
         return redirect(url_for("document.upload_page", session_id=new_session.id))
 
