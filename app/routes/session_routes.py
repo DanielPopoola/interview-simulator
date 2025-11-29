@@ -11,8 +11,12 @@ bp = Blueprint("session", __name__)
 def _get_session_service():
     return SessionService(SessionRepository())
 
-
 @bp.route("/")
+def landing():
+    return render_template("landing.html")
+
+
+@bp.route("/dashboard")
 def index():
     my_session_ids = flask_session.get("my_sessions", [])
 
